@@ -31,7 +31,7 @@ def send_email_notification(new_date):
     msg['From'] = EMAIL_ADDRESS
     msg['To'] = RECEIVER_EMAIL
     msg['Subject'] = subject
-    
+
     msg.attach(MIMEText(body, 'plain'))
 
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -53,6 +53,6 @@ def check_date_update():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# This is the handler Vercel expects for serverless functions
+# Vercel handler needs to be formatted like this:
 def handler(request, context):
-    return app(environ=request, start_response=context)
+    return app(request.environ, context.start_response)
