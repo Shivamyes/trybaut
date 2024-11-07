@@ -1,15 +1,14 @@
 {
   "builds": [
     {
-      "src": "Dockerfile",
+      "src": "api/check_date.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/check-date",
-      "dest": "/"
+      "dest": "api/check_date.py"
     }
   ]
 }
-  
