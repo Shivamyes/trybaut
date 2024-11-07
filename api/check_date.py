@@ -7,13 +7,14 @@ from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 
+# Configuration settings
 URL = "https://jeemain.nta.nic.in/"
 CHECK_ELEMENT_TAG = "strong"
 CHECK_ELEMENT_STYLE = {"style": "user-select: auto;"}
-CHECKED_DATE = "Nov 06, 2024"  # Initial date to monitor
-EMAIL_ADDRESS = "littleang935@gmail.com"  # Replace with your email
-EMAIL_PASSWORD = "Shivam%123"  # Replace with your password
-RECEIVER_EMAIL = "shivambhardwaj4047@gmail.com"  # Replace with recipient email
+CHECKED_DATE = "Nov 06, 2024"  # The date to monitor
+EMAIL_ADDRESS = "littleang935@gmail.com"
+EMAIL_PASSWORD = "Shivam%123"
+RECEIVER_EMAIL = "shivambhardwaj4047@gmail.com"
 
 def fetch_date_from_website():
     response = requests.get(URL)
@@ -33,16 +34,12 @@ def send_email_notification(new_date):
     
     msg.attach(MIMEText(body, 'plain'))
 
-    try:
-        with smtplib.SMTP('smtp.gmail.com', 587) as server:
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.sendmail(EMAIL_ADDRESS, RECEIVER_EMAIL, msg.as_string())
-        print("Email sent successfully.")
-    except Exception as e:
-        print(f"Failed to send email: {e}")
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        server.sendmail(EMAIL_ADDRESS, RECEIVER_EMAIL, msg.as_string())
 
-@app.route('/check-date', methods=['GET'])
+@app.route('/api/check-date', methods=['GET'])
 def check_date_update():
     global CHECKED_DATE
     try:
@@ -56,5 +53,6 @@ def check_date_update():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+# This is the handler Vercel expects for serverless functions
+def handler(request, context):
+    return app(environ=request, start_response=context)
